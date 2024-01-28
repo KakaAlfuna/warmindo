@@ -137,10 +137,27 @@ class TransactionController extends Controller
     }
     public function success(Transaction $transaction)
     {
+        $transaction = Transaction::where('user_id', Auth::user()->id)->where('status', 'pending')->first();
         $transaction->status= 'success';
         $transaction->update();
 
         return redirect()->route('home');
+    }
+    
+    public function Admin()
+    {
+        return view('admin');
+    }
+    public function apiAdmin()
+    {
+        $transactions = Transaction::all();
+    
+        $transactions = $transactions->map(function ($item, $index) {
+            $item['index'] = $index + 1;
+            return $item;
+        });
+    
+        return response()->json($transactions);
     }
     
     /**

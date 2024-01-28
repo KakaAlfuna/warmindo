@@ -31,4 +31,6 @@ Route::post('/addToCart', [App\Http\Controllers\TransactionController::class, 'a
 Route::post('/checkout', [App\Http\Controllers\TransactionController::class, 'checkout']);
 Route::get('/bayar', [App\Http\Controllers\TransactionController::class, 'bayar'])->name('bayar');
 Route::get('/success', [App\Http\Controllers\TransactionController::class, 'success'])->name('success');
+Route::get('/admin', [App\Http\Controllers\TransactionController::class, 'admin'])->name('admin');
+Route::get('/api/admin', [App\Http\Controllers\TransactionController::class, 'apiAdmin'])->name('adminApi');
 
