@@ -30,7 +30,7 @@
                     </td>
                     <td>
                         <button class="btn btn-warning" v-on:click="editMenu(menu)" >Edit</button>
-                        <button class="btn btn-danger" v-on:click="deleteMenu(menu.id)" >Delete</button>
+                        <button class="btn btn-danger" v-on:click="deleteMenu(menu.id)">Delete</button>
                     </td>
                 </tr>
             </tbody>
@@ -94,7 +94,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Add</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
                             </div>
                         </form>
                     </div>                
@@ -143,13 +143,13 @@
                 $('#modalEdit').modal();
             },
             deleteMenu(id) {
-                this.actionUrl = this.actionUrl+'/'+id;
-                if (confirm("Are you sure?")) {
-                    axios.delete(this.actionUrl, { data: { _method: 'DELETE' } })
+                axios.delete(`/addMenu/${id}`)
                     .then(response => {
-                            location.reload();
-                        });
-                }
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
             },
         },
     });

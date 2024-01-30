@@ -13,25 +13,17 @@ class MenuController extends Controller
      */
     public function index()
     {
-        //
+        return view('menu.index');
     }
+
     public function api()
     {
-        $menu = Menu::all();
-        $menu = $menu->map(function ($item, $index) {
+        $menus = Menu::all()->map(function ($item, $index) {
             $item['index'] = $index + 1;
             return $item;
         });
 
-        return json_encode($menu) ;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return json_encode($menus);
     }
 
     /**
@@ -39,12 +31,18 @@ class MenuController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
+        $this->validate($request, [
+            'nama_makanan' => 'required|string',
+            'harga' => 'required|numeric',
+            'detail' => 'nullable|string',
+            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
         $image = $request->file('gambar');
         $filename = $request->nama_makanan;
-        $path = "assets/".$filename.".jpeg";
-        // dd($image);
-        Storage::disk('public')->put($path,file_get_contents($image));
+        $path = "assets/" . $filename . ".jpeg";
+
+        Storage::disk('public')->put($path, file_get_contents($image));
 
         $newMenu = new Menu;
         $newMenu->nama_makanan = $request->input('nama_makanan');
@@ -56,54 +54,42 @@ class MenuController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Menu $menu)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Menu $menu)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Menu $menu)
+    public function update(Request $request, $id)
     {
-        // dd($request);
-        // dd($menu);
-        $image = $request->file('gambar');
-        $filename = $request->nama_makanan;
-        $path = "assets/".$filename.".jpeg";
-        // dd($image);
-        if($image){
-            Storage::disk('public')->put($path,file_get_contents($image));
+        $this->validate($request, [
+            'nama_makanan' => 'required|string',
+            'harga' => 'required|numeric',
+            'detail' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $menu = Menu::findOrFail($id);
+
+        if ($request->hasFile('gambar')) {
+            $image = $request->file('gambar');
+            $filename = $request->nama_makanan;
+            $path = "assets/" . $filename . ".jpeg";
+
+            Storage::disk('public')->put($path, file_get_contents($image));
         }
-        $menu = Menu::where('nama_makanan', $request->input('nama_makanan'))->first();
-        // dd($menu);
-        $menu->delete();
-        $menu = new Menu;
-        $menu->nama_makanan = $request->nama_makanan;
-        $menu->harga = $request->harga;
-        $menu->detail = $request->detail;
-        $menu->save();
-        // dd($request->nama_makanan);
+
+        $menu->update([
+            'nama_makanan' => $request->input('nama_makanan'),
+            'harga' => $request->input('harga'),
+            'detail' => $request->input('detail'),
+        ]);
+
         return redirect()->route('menus');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Menu $menu)
+    public function destroy($id)
     {
+        $menu = Menu::findOrFail($id);
         $menu->delete();
-
-        return redirect()->route('menus');
     }
 }

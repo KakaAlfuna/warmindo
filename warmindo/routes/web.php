@@ -40,4 +40,5 @@ Route::get('/menus', [App\Http\Controllers\AdminController::class, 'menu'])->nam
 Route::get('/drinks', [App\Http\Controllers\AdminController::class, 'minuman']);
 Route::post('/addMenu', [App\Http\Controllers\MenuController::class, 'store']);
 Route::post('/addMenu/{id}', [App\Http\Controllers\MenuController::class, 'update']);
+Route::delete('/addMenu/{id}', [App\Http\Controllers\MenuController::class, 'destroy']);
 
