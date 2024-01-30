@@ -1,7 +1,25 @@
 @extends('layouts.app')
 
 @section('css')
-    
+<style>
+    .card {
+        width: 20rem;
+        padding: 10px;
+        border: none;
+        position: relative;
+    }
+    .btn-buy{
+        background-color: rgba(13, 184, 79, 0.932);
+        position: relative;
+        color: white;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+    .btn-buy:hover{
+        background-color: white;
+        border: 2px solid;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -9,23 +27,53 @@
     <div class="col-md-12">
         <h2 class="text-center" style="font-family: Arial, Helvetica, sans-serif">
             Warmindo         
+            <i class="fas fa-shopping-cart" data-bs-toggle="modal" data-bs-target="#modalCart" style="float: right"></i>
         </h2>            
-        <i class="fas fa-shopping-cart" data-bs-toggle="modal" data-bs-target="#modalCart" style="float: right"></i>
     </div>
     
-    
-    <div class="col-md-12">
+    <!--banner-->
+    <div class="container-fluid">
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="{{ asset('assets/nasi_goreng.png') }}" class="d-block w-100" style="height: 500px">
+                </div>
+                <div class="carousel-item">
+                    <img src="{{ asset('assets/mi_goreng.jpeg')}}" class="d-block w-100" style="height: 500px">
+                </div>
+                <div class="carousel-item">
+                    <img src="{{ asset('assets/mi_kuah.jpeg') }}" class="d-block w-100" style="height: 500px">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="col-md-12 mt-5">
         <strong>
             <h3>Makanan</h3>
         </strong>
+        <hr>
     </div>
     <div class="row">
-        <div class="col-md-4 mt-2" v-for="makanan in makanans">
+        <div class="col-md-3 mt-2" v-for="makanan in makanans">
             <div class="card" style="width: 18rem;">
+                <div class="card-header">
+                    <img :src="'storage/assets/' + makanan.nama_makanan + '.jpeg'" alt="" style="width: 250px; height: 250px">
+                </div>
                 <div class="card-body">
-                    <h5 class="card-title">@{{ makanan.nama_makanan }}/ <strong>Rp. @{{ number_format(makanan.harga) }},-</strong></h5>
+                    <h5 class="card-title">@{{ makanan.nama_makanan }}
+                    </h5>
+                    <strong>Rp. @{{ number_format(makanan.harga) }},-</strong>
                     <p class="card-text">@{{ makanan.detail }}</p>
-                    <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPesanan" v-on:click="openModal(makanan)">Pesan</div>
+                    <div class="btn btn-buy" data-bs-toggle="modal" data-bs-target="#modalPesanan" v-on:click="openModal(makanan)">Pesan</div>
                 </div>
             </div>
         </div>
@@ -34,22 +82,25 @@
         <strong>
             <h3>Minuman</h3>
         </strong>
+        <hr>
     </div>
     <div class="row">
-        <div class="col-md-4 mt-2" v-for="minuman in minumans">
+        <div class="col-md-3 mt-2" v-for="minuman in minumans">
             <div class="card" style="width: 18rem;">
+                <div class="card-header">
+                    <img :src="'assets/' + minuman.nama_minuman + '.jpeg'" alt="" style="width: 250px; height: 250px">
+                </div>
                 <div class="card-body">
-                    <h5 class="card-title">@{{ minuman.nama_minuman }}/ <strong>Rp. @{{ number_format(minuman.harga) }},-</strong></h5>
+                    <h5 class="card-title">@{{ minuman.nama_minuman }}
+                    </h5>
+                    <strong>Rp. @{{ number_format(minuman.harga) }},-</strong>
                     <p class="card-text">@{{ minuman.detail }}</p>
-                    <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPesanan" v-on:click="openModal(minuman)">Pesan</div>
+                    <div class="btn btn-buy" data-bs-toggle="modal" data-bs-target="#modalPesanan" v-on:click="openModal(minuman)">Pesan</div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-12 mt-5">
-        <a href="{{ url('/bayar') }}" class="btn btn-primary">bayar</a>            
-    </div>
+
     {{-- Modal Pesanan --}}
     <div class="modal" tabindex="-1" id="modalPesanan">
         <div class="modal-dialog">
@@ -68,7 +119,7 @@
                         <label for="kuantiti">Kuantiti:</label>
                         <input class="form-control" type="number" v-model="selectedItem.quantity" name="qty" id="qty" @input="calculateTotal">                   
                         <label for="total">Total:</label>
-                        <input class="form-control" type="text" :value="number_format(total)" disabled>
+                        <input class="form-control" type="text" :value="number_format(selectedItem.total)" disabled>
                     </form>
                 </div>                
                 <div class="modal-footer">
@@ -89,14 +140,24 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <ul>
-                        <li v-for="(pesanan, index) in pesanans">
-                            @{{ pesanan.menu }} - @{{ pesanan.quantity }} pcs - Rp. @{{ number_format(pesanan.total) }}
-                            <button class="btn btn-sm btn-danger" @click="removeFromCart(pesanan.id)">Delete</button>
-                        </li>
-                    </ul>
+                    <table class="table table-bordered" v-if="pesanans.length > 0">
+                        <tr>
+                            <th>Menu</th>
+                            <th>Kuantiti</th>
+                            <th>Total</th>
+                            <th>Delete</th>
+                        </tr>
+                        <tr v-for="(pesanan, index) in pesanans">
+                            <td>@{{ pesanan.menu }}</td>
+                            <td>@{{ pesanan.quantity }}</td>
+                            <td>Rp.@{{ number_format(pesanan.total) }},-</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" @click="removeFromCart(pesanan.id)">Delete</button>
+                            </td>
+                        </tr>
+                    </table>
                     <hr>                    
-                    <p>Total Pesanan: Rp. @{{ number_format(totalPesanan) }}</p>
+                    <p style="float: right">Total Pesanan: Rp. @{{ number_format(totalPesanan) }}</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -159,7 +220,7 @@
                     });
             },
             openModal(selectedItem) {
-                this.selectedItem = { ...selectedItem, quantity: 1 };
+                this.selectedItem = { ...selectedItem, quantity: 0 };
             },
             addToCart(selectedItem) {
                 this.selectedItem = selectedItem;
@@ -200,11 +261,6 @@
                     .then(() => {
                         this.get_pesanan()        
                     })
-            },
-        },
-        computed: {
-            total() {
-                return this.selectedItem.total || 0;
             },
         },
     });

@@ -25,6 +25,10 @@ class DrinkController extends Controller
     public function api()
     {
         $drink = Drink::all();
+        $drink = $drink->map(function ($item, $index) {
+            $item['index'] = $index + 1;
+            return $item;
+        });
 
         return json_encode($drink) ;
     }

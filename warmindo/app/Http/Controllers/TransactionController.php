@@ -148,7 +148,7 @@ class TransactionController extends Controller
     {
         return view('admin');
     }
-    public function apiAdmin()
+    public function apiTransaction()
     {
         $transactions = Transaction::all();
     
