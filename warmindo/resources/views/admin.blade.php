@@ -17,7 +17,7 @@
                 <div class="icon">
                     <i class="fa fa-book"></i>
                 </div>
-            <a href="{{ url('transaction') }}" class="small-box-footer">More Info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ url('transactions') }}" class="small-box-footer">More Info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <div class="col-lg-4 col-6">

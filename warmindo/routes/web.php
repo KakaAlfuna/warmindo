@@ -29,6 +29,7 @@ Route::get('/api/drinks', [App\Http\Controllers\DrinkController::class, 'api']);
 Route::get('/api/transaction', [App\Http\Controllers\TransactionController::class, 'transactionApi']);
 Route::get('/api/transactions', [App\Http\Controllers\TransactionController::class, 'apiTransaction']);
 Route::get('/cart', [App\Http\Controllers\TransactionController::class, 'api']);
+Route::get('/count', [App\Http\Controllers\HomeController::class, 'countCart']);
 Route::delete('/cart/{id}', [App\Http\Controllers\TransactionDetailController::class, 'destroy']);
 Route::post('/addToCart', [App\Http\Controllers\TransactionController::class, 'addToCart']);
 Route::post('/checkout', [App\Http\Controllers\TransactionController::class, 'checkout']);

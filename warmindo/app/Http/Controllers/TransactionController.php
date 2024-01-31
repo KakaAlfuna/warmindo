@@ -106,6 +106,7 @@ class TransactionController extends Controller
     public function checkout(Request $request, Transaction $transaction)
     {
         $transaction = Transaction::where('user_id', Auth::user()->id)->where('status', '0')->first();
+        $transaction->total = $request->input('total');
 
         // Set your Merchant Server Key
         \Midtrans\Config::$serverKey = config('midtrans.serverKey');

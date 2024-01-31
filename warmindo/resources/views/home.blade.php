@@ -26,9 +26,14 @@
 <div id="controller" class="container">
     <div class="col-md-12">
         <h2 class="text-center" style="font-family: Arial, Helvetica, sans-serif">
-            Warmindo         
-            <i class="fas fa-shopping-cart" data-bs-toggle="modal" data-bs-target="#modalCart" style="float: right"></i>
-        </h2>            
+            Warmindo        
+        </h2>
+        <button class="btn position-relative mb-2" style="float: right"  data-bs-toggle="modal" data-bs-target="#modalCart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                @{{ count }}
+            </span>
+        </button>            
     </div>
     
     <!--banner-->
@@ -175,6 +180,7 @@
     var makananApi = "{{ url('api/menus') }}";
     var minumanApi = "{{ url('api/drinks') }}";
     var cartApi = "{{ url('/cart') }}";
+    var countApi = "{{ url('/count') }}";
 
     var app = new Vue({
         el: '#controller',
@@ -183,12 +189,14 @@
             minumans: [],
             selectedItem: {},
             pesanans: [],
+            count: [],
             totalPesanan: 0,
         },
         mounted: function() {
             this.get_makanan();
             this.get_minuman();
             this.get_pesanan();
+            this.get_count();
         },
         methods: {
             get_makanan() {
@@ -204,6 +212,15 @@
                 axios.get(minumanApi)
                     .then(response => {
                         this.minumans = response.data;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
+            get_count() {
+                axios.get(countApi)
+                    .then(response => {
+                        this.count = response.data;
                     })
                     .catch(error => {
                         console.log(error);
@@ -232,6 +249,7 @@
                     total: selectedItem.total,
                 }).then(() => {
                     this.get_pesanan();
+                    this.get_count();
                 });
             },
             calculateTotal() {
@@ -254,13 +272,17 @@
                 axios.delete(`/cart/${id}`)
                     .then(() => {
                         this.get_pesanan();
+                        this.get_count();
                     });
-            },
+                },
             checkout() {
-                axios.post('/checkout')
-                    .then(() => {
-                        this.get_pesanan()        
-                    })
+                axios.post('/checkout', {
+                    total : this.totalPesanan
+                })
+                .then(() => {
+                    this.get_pesanan();        
+                    this.get_count();
+                })
             },
         },
     });
